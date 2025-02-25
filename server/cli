@@ -1,0 +1,11 @@
+# Model Users
+
+npx sequelize-cli model:generate --name User --attributes username:string,email:string,password:string,height:float,weight:float,age:integer,gender:string,activity_level:string
+
+# Model Recipes - lebih sederhana, tanpa price_per_serving,source_name,source_url, dan dengan array ingredients
+
+npx sequelize-cli model:generate --name Recipe --attributes spoonacular_id:integer,title:string,image_url:string,servings:integer,ready_in_minutes:integer,health_score:float,summary:text,instructions:text,vegetarian:boolean,vegan:boolean,gluten_free:boolean,dairy_free:boolean,very_healthy:boolean,cheap:boolean,cooking_minutes:integer,preparation_minutes:integer,dish_types:text,ingredients:text
+
+# Model UserSavedRecipes
+
+npx sequelize-cli model:generate --name UserSavedRecipe --attributes UserId:integer,RecipeId:integer,is_favorite:boolean,notes:text
