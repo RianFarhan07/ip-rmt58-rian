@@ -67,6 +67,27 @@ class UserController {
     }
   }
 
+  static async getProfile(req, res) {
+    try {
+      const id = req.user.id;
+
+      const user = await User.findByPk(id, {
+        attributes: {
+          exclude: ["password"],
+        },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json(user);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
   static async updateProfile(req, res) {
     try {
       const { height, weight, age, gender, activity_level, diet, allergies } =

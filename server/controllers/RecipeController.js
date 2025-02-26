@@ -47,6 +47,12 @@ class RecipeController {
       let { height, gender, weight, age, activity_level, diet, allergies } =
         user;
 
+      if (!height || !gender || !weight || !age || !activity_level) {
+        return res.status(400).json({
+          message: "Please provide all required user information",
+        });
+      }
+
       if (allergies !== null) {
         allergies = allergies.join(",");
       }
