@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       is_favorite: DataTypes.BOOLEAN,
-      notes: DataTypes.TEXT,
+      notes: DataTypes.STRING,
     },
     {
       sequelize,

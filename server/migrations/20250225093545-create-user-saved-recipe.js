@@ -22,7 +22,7 @@ module.exports = {
         defaultValue: false,
       },
       notes: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

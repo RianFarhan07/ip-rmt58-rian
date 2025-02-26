@@ -150,6 +150,51 @@ class UserSavedRecipeController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+
+  static async deleteMyRecipe(req, res) {
+    try {
+      const { id } = req.params;
+
+      const myRecipe = await UserSavedRecipe.findOne({
+        where: { id },
+      });
+
+      if (!myRecipe) {
+        return res.status(404).json({ message: "Recipe not found" });
+      }
+
+      await myRecipe.destroy();
+
+      res.status(200).json({ message: "Recipe removed from saved recipes" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  static async updateNoteMyRecipe(req, res) {
+    try {
+      const { id } = req.params;
+      const { notes } = req.body;
+
+      const myRecipe = await UserSavedRecipe.findOne({
+        where: { id },
+      });
+
+      if (!myRecipe) {
+        return res.status(404).json({ message: "Recipe not found" });
+      }
+
+      await myRecipe.update({
+        notes,
+      });
+
+      res.status(200).json(myRecipe);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
 
 module.exports = UserSavedRecipeController;
