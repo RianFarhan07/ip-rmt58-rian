@@ -6,7 +6,6 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile, updateProfile } from "../features/userSlice";
 
-const BASE_URL = "http://localhost:3000";
 
 const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);

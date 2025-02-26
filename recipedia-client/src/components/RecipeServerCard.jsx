@@ -1,7 +1,7 @@
 import { FiClock, FiHeart } from "react-icons/fi";
 import defaultImage from "../assets/logo-color.png";
 
-const RecipeCard = ({ recipe }) => {
+const RecipeServerCard = ({ recipe }) => {
   // Parse dish types and ingredients from JSON strings
   const dishTypes = recipe.dish_types ? JSON.parse(recipe.dish_types) : [];
   const ingredients = recipe.ingredients ? JSON.parse(recipe.ingredients) : [];
@@ -72,4 +72,4 @@ const RecipeCard = ({ recipe }) => {
   );
 };
 
-export default RecipeCard;
+export default RecipeServerCard;

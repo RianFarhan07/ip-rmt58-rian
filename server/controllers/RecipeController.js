@@ -39,7 +39,7 @@ class RecipeController {
       const { ingredients } = req.query;
 
       const response = await axios.get(
-        `${SPOONACULAR_BASE_URL}/recipes/findByIngredients?ingredients=${ingredients}&number=4&apiKey=${SPOONACULAR_API_KEY}`
+        `${SPOONACULAR_BASE_URL}/recipes/findByIngredients?ingredients=${ingredients}&number=12&apiKey=${SPOONACULAR_API_KEY}`
       );
 
       res.status(200).json(response.data);
@@ -186,6 +186,21 @@ class RecipeController {
 
       const response = await axios.get(
         `${SPOONACULAR_BASE_URL}/recipes/${id}/information?apiKey=${SPOONACULAR_API_KEY}&includeNutrition=false`
+      );
+
+      res.status(200).json(response.data);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  static async getRecipesByCategory(req, res) {
+    try {
+      const { category } = req.params;
+
+      const response = await axios.get(
+        `${SPOONACULAR_BASE_URL}/recipes/complexSearch?type=${category}&number=12&apiKey=${SPOONACULAR_API_KEY}`
       );
 
       res.status(200).json(response.data);

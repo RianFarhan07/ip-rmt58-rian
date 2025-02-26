@@ -10,17 +10,14 @@ import {
 import { BiCategory, BiLeaf } from "react-icons/bi";
 import { GiMeal } from "react-icons/gi";
 import Footer from "../components/Footer";
-import RecipeCard from "../components/RecipeCard";
 import RecipeServerCard from "../components/RecipeServerCard";
 import axios from "axios";
 import { BASE_URL } from "../helpers/url";
-import { set } from "react-hook-form";
 
 const Home = () => {
   const [recentRecipe, setRecentRecipe] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchRecentRecipes = async () => {
     setIsLoading(true);
@@ -139,12 +136,6 @@ const Home = () => {
               <BiCategory className="inline mr-2" />
               Browse Categories
             </h2>
-            <Link
-              to="/categories"
-              className="text-primary-dark hover:text-primary flex items-center"
-            >
-              View All <FiArrowRight className="ml-1" />
-            </Link>
           </div>
 
           <div className="relative">
@@ -169,7 +160,7 @@ const Home = () => {
                   : categories.map((category) => (
                       <Link
                         key={category.id}
-                        to={`/category/${category.id}`}
+                        to={`/categories/${category.name}`}
                         className="bg-background-card rounded-card p-4 shadow-card hover:shadow-hover transition-all text-center w-32 flex-shrink-0"
                       >
                         <div className="text-3xl mb-2">{category.icon}</div>

@@ -7,6 +7,9 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ProfilePage from "./pages/ProfilePage";
 import Home from "./pages/Home";
+import Category from "./pages/Category";
+import Search from "./pages/Search";
+import Nutrition from "./pages/Nutrition";
 
 const App = () => {
   return (
@@ -21,11 +24,9 @@ const App = () => {
         <Route path="/" element={<PrivateLayout />}>
           <Route index element={<Home />} />
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="searchByIngredients" element={<h1>Search</h1>} />
-          <Route
-            path="nutrition-analysis/:id"
-            element={<h1>Nutrition analysis</h1>}
-          />
+          <Route path="categories/:category" element={<Category />} />
+          <Route path="nutrition" element={<Nutrition />} />
+          <Route path="search" element={<Search />} />
 
           <Route path="recipeDetail/:id" element={<h1>Recipe</h1>} />
 

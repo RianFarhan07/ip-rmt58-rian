@@ -20,5 +20,10 @@ router.get(
   authentication,
   RecipeController.getMostRecentRecipes
 );
+router.get(
+  "/categories/:category",
+  authentication,
+  RecipeController.getRecipesByCategory
+);
 
 module.exports = router;
