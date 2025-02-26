@@ -28,6 +28,8 @@ const USER_SEEDS = [
     age: 25,
     gender: "male",
     activity_level: "moderate",
+    diet: "vegetarian",
+    allergies: ["dairy"],
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -52,6 +54,7 @@ const USER_SEEDS = [
     age: 30,
     gender: "male",
     activity_level: "low",
+    diet: "ketogenic",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -66,7 +69,6 @@ module.exports = {
         try {
           console.log(`Fetching recipe ${recipeId}...`);
 
-          // Fetch detail resep dari Spoonacular API
           const response = await axios.get(
             `${BASE_URL}/recipes/${recipeId}/information`,
             {
@@ -79,14 +81,12 @@ module.exports = {
 
           const recipeData = response.data;
 
-          // Ekstrak nama bahan-bahan ke dalam array
           const ingredientNames = recipeData.extendedIngredients
             ? recipeData.extendedIngredients.map(
                 (ingredient) => ingredient.name
               )
             : [];
 
-          // Siapkan data resep untuk insertion
           const recipeRow = {
             spoonacular_id: recipeData.id,
             title: recipeData.title,
@@ -105,7 +105,7 @@ module.exports = {
             cooking_minutes: recipeData.cookingMinutes,
             preparation_minutes: recipeData.preparationMinutes,
             dish_types: JSON.stringify(recipeData.dishTypes || []),
-            ingredients: JSON.stringify(ingredientNames), // Simpan sebagai string JSON array
+            ingredients: JSON.stringify(ingredientNames),
             createdAt: new Date(),
             updatedAt: new Date(),
           };
@@ -113,20 +113,16 @@ module.exports = {
           recipeRows.push(recipeRow);
 
           console.log(`Recipe ${recipeId} successfully processed.`);
-
-          // Delay untuk menghindari rate limiting
           await new Promise((resolve) => setTimeout(resolve, 1000));
         } catch (err) {
           console.error(`Failed to process recipe ${recipeId}:`, err.message);
         }
       }
 
-      // Bulk insert all recipes
       if (recipeRows.length > 0) {
         await queryInterface.bulkInsert("Recipes", recipeRows);
       }
 
-      // Bulk insert users
       await queryInterface.bulkInsert("Users", USER_SEEDS);
 
       console.log(
@@ -138,7 +134,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    // Delete all seeded recipes and users
     try {
       await queryInterface.bulkDelete(
         "Recipes",

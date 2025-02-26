@@ -1,14 +1,14 @@
-const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const BASE_URL = "https://api.spoonacular.com";
-const { default: axios } = require("axios");
+const axios = require("axios");
 const { UserSavedRecipe, Recipe } = require("../models");
+const {
+  SPOONACULAR_BASE_URL,
+  SPOONACULAR_API_KEY,
+} = require("../helpers/spoonacular");
 
 class UserSavedRecipeController {
   static async addToMyRecipe(req, res) {
     try {
-      //user klik tambah favorite di card
-      // cek data id kalau sudah ada di database maka langsung tambahkan ke myrecipe
-      //kalau belum buat dulu recipe dari recipe di spoonacular dan tambahkan ke my recipe nanti id recipenya dari database sendiri
       const { spoonacularId } = req.params;
 
       const existingRecipe = await Recipe.findOne({
@@ -25,7 +25,7 @@ class UserSavedRecipeController {
       }
 
       const response = await axios.get(
-        `${BASE_URL}/recipes/${spoonacularId}/information`,
+        `${SPOONACULAR_BASE_URL}/recipes/${spoonacularId}/information`,
         {
           params: {
             apiKey: SPOONACULAR_API_KEY,
@@ -133,7 +133,7 @@ class UserSavedRecipeController {
       const { spoonacular_id } = myRecipe.Recipe;
 
       const response = await axios.get(
-        `${BASE_URL}/recipes/${spoonacular_id}/information`,
+        `${SPOONACULAR_BASE_URL}/recipes/${spoonacular_id}/information`,
         {
           params: {
             apiKey: SPOONACULAR_API_KEY,

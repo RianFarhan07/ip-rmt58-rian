@@ -9,5 +9,10 @@ router.get(
   authentication,
   RecipeController.getRecipeByIngredients
 );
+router.get(
+  "/generateByNutrients",
+  authentication,
+  RecipeController.generateByNutrients
+);
 
 module.exports = router;

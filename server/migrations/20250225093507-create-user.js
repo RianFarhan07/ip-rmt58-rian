@@ -40,6 +40,12 @@ module.exports = {
       activity_level: {
         type: Sequelize.STRING,
       },
+      diet: {
+        type: Sequelize.STRING,
+      },
+      allergies: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -89,7 +89,55 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           isIn: {
             args: [["low", "light", "moderate", "high", "very_high"]],
-            msg: "activity level must be either 'low', 'light', 'moderate', 'high', or 'very_high'",
+            msg: "Activity level must be either 'low', 'light', 'moderate', 'high', or 'very_high'",
+          },
+        },
+      },
+      diet: {
+        type: DataTypes.STRING,
+        validate: {
+          isIn: {
+            args: [
+              [
+                "gluten free",
+                "ketogenic",
+                "vegetarian",
+                "lacto-vegetarian",
+                "ovo-vegetarian",
+                "vegan",
+                "pescetarian",
+                "paleo",
+                "primal",
+                "low fodmap",
+                "whole30",
+              ],
+            ],
+            msg: "Invalid diet type",
+          },
+        },
+      },
+      allergies: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        validate: {
+          isArray: true,
+          isIn: {
+            args: [
+              [
+                "dairy",
+                "egg",
+                "gluten",
+                "grain",
+                "peanut",
+                "seafood",
+                "sesame",
+                "shellfish",
+                "soy",
+                "sulfite",
+                "tree nut",
+                "wheat",
+              ],
+            ],
+            msg: "Invalid allergy type",
           },
         },
       },
