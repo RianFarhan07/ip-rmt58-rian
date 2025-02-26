@@ -6,6 +6,7 @@ import PublicHome from "./pages/PublicHome";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ProfilePage from "./pages/ProfilePage";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
@@ -18,7 +19,7 @@ const App = () => {
         </Route>
 
         <Route path="/" element={<PrivateLayout />}>
-          <Route index element={<h1>Home</h1>} />
+          <Route index element={<Home />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="searchByIngredients" element={<h1>Search</h1>} />
           <Route

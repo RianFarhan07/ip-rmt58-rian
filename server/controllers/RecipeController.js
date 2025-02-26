@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { Recipe } = require("../models");
 const {
   SPOONACULAR_API_KEY,
   SPOONACULAR_BASE_URL,
@@ -9,7 +10,7 @@ class RecipeController {
   static async getRandomRecipe(req, res) {
     try {
       const response = await axios.get(
-        `${SPOONACULAR_BASE_URL}/recipes/random?number=9&apiKey=${SPOONACULAR_API_KEY}`
+        `${SPOONACULAR_BASE_URL}/recipes/random?number=12&apiKey=${SPOONACULAR_API_KEY}`
       );
 
       res.status(200).json(response.data);
@@ -19,12 +20,26 @@ class RecipeController {
     }
   }
 
+  static async getMostRecentRecipes(req, res) {
+    try {
+      const response = await Recipe.findAll({
+        order: [["createdAt", "DESC"]],
+        limit: 4,
+      });
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
   static async getRecipeByIngredients(req, res) {
     try {
-      const { ingredients, number } = req.query;
+      const { ingredients } = req.query;
 
       const response = await axios.get(
-        `${SPOONACULAR_BASE_URL}/recipes/findByIngredients?ingredients=${ingredients}&number=${number}&apiKey=${SPOONACULAR_API_KEY}`
+        `${SPOONACULAR_BASE_URL}/recipes/findByIngredients?ingredients=${ingredients}&number=4&apiKey=${SPOONACULAR_API_KEY}`
       );
 
       res.status(200).json(response.data);

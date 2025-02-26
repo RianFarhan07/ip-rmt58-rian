@@ -7,7 +7,6 @@ const guardOwnerOnly = require("../middlewares/guardOwnerOnly");
 router.use(authentication);
 
 router.get("/", UserSavedRecipeController.getUserSavedRecipes);
-router.get("/:id", UserSavedRecipeController.getMyRecipeDetail);
 router.get(
   "/full-detail/:id",
 
@@ -28,5 +27,6 @@ router.post(
   guardOwnerOnly,
   UserSavedRecipeController.updateNoteMyRecipe
 );
+router.get("/:id", UserSavedRecipeController.getMyRecipeDetail);
 
 module.exports = router;
