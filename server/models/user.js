@@ -119,25 +119,31 @@ module.exports = (sequelize, DataTypes) => {
       allergies: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         validate: {
-          isArray: true,
-          isIn: {
-            args: [
-              [
-                "dairy",
-                "egg",
-                "gluten",
-                "grain",
-                "peanut",
-                "seafood",
-                "sesame",
-                "shellfish",
-                "soy",
-                "sulfite",
-                "tree nut",
-                "wheat",
-              ],
-            ],
-            msg: "Invalid allergy type",
+          isValidAllergies(value) {
+            if (!Array.isArray(value)) {
+              throw new Error("Allergies must be an array");
+            }
+
+            const allowedAllergies = [
+              "dairy",
+              "egg",
+              "gluten",
+              "grain",
+              "peanut",
+              "seafood",
+              "sesame",
+              "shellfish",
+              "soy",
+              "sulfite",
+              "tree nut",
+              "wheat",
+            ];
+
+            for (const allergy of value) {
+              if (!allowedAllergies.includes(allergy)) {
+                throw new Error(`Invalid allergy type: ${allergy}`);
+              }
+            }
           },
         },
       },

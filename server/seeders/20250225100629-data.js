@@ -10,12 +10,10 @@ const BASE_URL = "https://api.spoonacular.com";
 
 // ID-ID resep populer dari Spoonacular untuk seeding
 const POPULAR_RECIPE_IDS = [
-  716429, 715538, 715573, 632269,
-
-  //  632252, 632274, 631870, 632282, 715435,
-  // 715446, 715497, 715769, 716195, 716217, 716429, 716432, 716627, 716652,
-  // 717109, 717338, 717614, 717875, 718455, 718515, 718568, 718813, 719001,
-  // 719126, 719202, 719312,
+  716429, 715538, 715573, 632269, 632252, 632274, 631870, 632282, 715435,
+  715446, 715497, 715769, 716195, 716217, 716429, 716432, 716627, 716652,
+  717109, 717338, 717614, 717875, 718455, 718515, 718568, 718813, 719001,
+  719126, 719202, 719312,
 ];
 
 const USER_SEEDS = [
@@ -29,7 +27,7 @@ const USER_SEEDS = [
     gender: "male",
     activity_level: "moderate",
     diet: "vegetarian",
-    allergies: ["dairy"],
+    allergies: ["dairy", "seafood"],
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -63,60 +61,52 @@ const USER_SEEDS = [
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     try {
+      // Menggunakan bulk information request dengan endpoint recipes/informationBulk
+      console.log(
+        `Fetching information for ${POPULAR_RECIPE_IDS.length} recipes in one request...`
+      );
+
+      const response = await axios.get(`${BASE_URL}/recipes/informationBulk`, {
+        params: {
+          apiKey: SPOONACULAR_API_KEY,
+          ids: POPULAR_RECIPE_IDS.join(","),
+          includeNutrition: false,
+        },
+      });
+
+      const recipesData = response.data;
       const recipeRows = [];
 
-      for (const recipeId of POPULAR_RECIPE_IDS) {
-        try {
-          console.log(`Fetching recipe ${recipeId}...`);
+      for (const recipeData of recipesData) {
+        const ingredientNames = recipeData.extendedIngredients
+          ? recipeData.extendedIngredients.map((ingredient) => ingredient.name)
+          : [];
 
-          const response = await axios.get(
-            `${BASE_URL}/recipes/${recipeId}/information`,
-            {
-              params: {
-                apiKey: SPOONACULAR_API_KEY,
-                includeNutrition: false,
-              },
-            }
-          );
+        const recipeRow = {
+          spoonacular_id: recipeData.id,
+          title: recipeData.title,
+          image_url: recipeData.image,
+          servings: recipeData.servings,
+          ready_in_minutes: recipeData.readyInMinutes,
+          health_score: recipeData.healthScore,
+          summary: recipeData.summary,
+          instructions: recipeData.instructions,
+          vegetarian: recipeData.vegetarian,
+          vegan: recipeData.vegan,
+          gluten_free: recipeData.glutenFree,
+          dairy_free: recipeData.dairyFree,
+          very_healthy: recipeData.veryHealthy,
+          cheap: recipeData.cheap,
+          cooking_minutes: recipeData.cookingMinutes,
+          preparation_minutes: recipeData.preparationMinutes,
+          dish_types: JSON.stringify(recipeData.dishTypes || []),
+          ingredients: JSON.stringify(ingredientNames),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
 
-          const recipeData = response.data;
-
-          const ingredientNames = recipeData.extendedIngredients
-            ? recipeData.extendedIngredients.map(
-                (ingredient) => ingredient.name
-              )
-            : [];
-
-          const recipeRow = {
-            spoonacular_id: recipeData.id,
-            title: recipeData.title,
-            image_url: recipeData.image,
-            servings: recipeData.servings,
-            ready_in_minutes: recipeData.readyInMinutes,
-            health_score: recipeData.healthScore,
-            summary: recipeData.summary,
-            instructions: recipeData.instructions,
-            vegetarian: recipeData.vegetarian,
-            vegan: recipeData.vegan,
-            gluten_free: recipeData.glutenFree,
-            dairy_free: recipeData.dairyFree,
-            very_healthy: recipeData.veryHealthy,
-            cheap: recipeData.cheap,
-            cooking_minutes: recipeData.cookingMinutes,
-            preparation_minutes: recipeData.preparationMinutes,
-            dish_types: JSON.stringify(recipeData.dishTypes || []),
-            ingredients: JSON.stringify(ingredientNames),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
-
-          recipeRows.push(recipeRow);
-
-          console.log(`Recipe ${recipeId} successfully processed.`);
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (err) {
-          console.error(`Failed to process recipe ${recipeId}:`, err.message);
-        }
+        recipeRows.push(recipeRow);
+        console.log(`Recipe ${recipeData.id} successfully processed.`);
       }
 
       if (recipeRows.length > 0) {

@@ -69,7 +69,8 @@ class UserController {
 
   static async updateProfile(req, res) {
     try {
-      const { height, weight, age, gender, activity_level } = req.body;
+      const { height, weight, age, gender, activity_level, diet, allergies } =
+        req.body;
       const id = req.user.id;
 
       if (height === undefined || height === null) {
@@ -113,11 +114,63 @@ class UserController {
         "high",
         "very_high",
       ];
-      if (!activity_level && !allowedActivityLevels.includes(activity_level)) {
+      if (!activity_level || !allowedActivityLevels.includes(activity_level)) {
         return res.status(400).json({
           message:
-            "activity level must be either 'low', 'light', 'moderate', 'high', or 'very_high'",
+            "Activity level must be either 'low', 'light', 'moderate', 'high', or 'very_high'",
         });
+      }
+
+      // Validate diet if provided
+      if (diet) {
+        const allowedDiets = [
+          "gluten free",
+          "ketogenic",
+          "vegetarian",
+          "lacto-vegetarian",
+          "ovo-vegetarian",
+          "vegan",
+          "pescetarian",
+          "paleo",
+          "primal",
+          "low fodmap",
+          "whole30",
+        ];
+        if (!allowedDiets.includes(diet)) {
+          return res.status(400).json({ message: "Invalid diet type" });
+        }
+      }
+
+      // Validate allergies if provided
+      if (allergies) {
+        if (!Array.isArray(allergies)) {
+          return res
+            .status(400)
+            .json({ message: "Allergies must be an array" });
+        }
+
+        const allowedAllergies = [
+          "dairy",
+          "egg",
+          "gluten",
+          "grain",
+          "peanut",
+          "seafood",
+          "sesame",
+          "shellfish",
+          "soy",
+          "sulfite",
+          "tree nut",
+          "wheat",
+        ];
+
+        for (const allergy of allergies) {
+          if (!allowedAllergies.includes(allergy)) {
+            return res
+              .status(400)
+              .json({ message: `Invalid allergy type: ${allergy}` });
+          }
+        }
       }
 
       const user = await User.findByPk(id);
@@ -131,6 +184,8 @@ class UserController {
         age,
         gender,
         activity_level,
+        diet,
+        allergies,
       });
 
       res.status(200).json({ message: "Profile updated successfully" });

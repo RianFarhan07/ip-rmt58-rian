@@ -158,6 +158,21 @@ class RecipeController {
       });
     }
   }
+
+  static async getRecipeDetail(req, res) {
+    try {
+      const { id } = req.params;
+
+      const response = await axios.get(
+        `${SPOONACULAR_BASE_URL}/recipes/${id}/information?apiKey=${SPOONACULAR_API_KEY}&includeNutrition=false`
+      );
+
+      res.status(200).json(response.data);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
 
 module.exports = RecipeController;
