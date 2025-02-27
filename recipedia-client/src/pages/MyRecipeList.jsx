@@ -1,14 +1,19 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FiTrash2, FiEye } from "react-icons/fi";
-import { BASE_URL } from "../helpers/url";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteMyRecipe,
+  fetchMyRecipe,
+  updateMyRecipeNotes,
+} from "../features/myRecipe/myRecipe";
 
 const MyRecipesPage = () => {
-  const [recipes, setRecipes] = useState([]);
+  const myRecipe = useSelector((state) => state.myRecipe.list);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentRecipe, setCurrentRecipe] = useState(null);
@@ -17,12 +22,7 @@ const MyRecipesPage = () => {
   const fetchMyRecipes = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/my-recipes`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-      setRecipes(response.data);
+      dispatch(fetchMyRecipe());
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -37,11 +37,7 @@ const MyRecipesPage = () => {
 
   const handleDelete = async (recipeId) => {
     try {
-      await axios.delete(`${BASE_URL}/my-recipes/delete/${recipeId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
+      await dispatch(deleteMyRecipe(recipeId));
       fetchMyRecipes();
     } catch (error) {
       console.log(error);
@@ -57,23 +53,7 @@ const MyRecipesPage = () => {
 
   const saveNotes = async () => {
     try {
-      await axios.put(
-        `${BASE_URL}/my-recipes/note/${currentRecipe.id}`,
-        { notes: noteText },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      // Update the local state to reflect the changes
-      setRecipes(
-        recipes.map((recipe) =>
-          recipe.id === currentRecipe.id
-            ? { ...recipe, notes: noteText }
-            : recipe
-        )
-      );
+      await dispatch(updateMyRecipeNotes(currentRecipe.id, noteText));
       setIsModalOpen(false);
     } catch (error) {
       console.log(error);
@@ -110,7 +90,7 @@ const MyRecipesPage = () => {
         <div className="text-center p-10">
           <p className="text-lg">Loading your recipes...</p>
         </div>
-      ) : recipes.length === 0 ? (
+      ) : myRecipe.length === 0 ? (
         <div className="text-center p-10 bg-gray-50 rounded-lg">
           <p className="text-lg text-gray-500">
             You haven't saved any recipes yet.
@@ -131,7 +111,7 @@ const MyRecipesPage = () => {
               </tr>
             </thead>
             <tbody>
-              {recipes.map((recipe) => (
+              {myRecipe.map((recipe) => (
                 <tr key={recipe.id} className="border-t border-gray-200">
                   <td className="p-4">
                     <img

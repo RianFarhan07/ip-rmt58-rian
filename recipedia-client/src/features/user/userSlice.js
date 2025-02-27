@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "../helpers/url";
+import { BASE_URL } from "../../helpers/url";
 
 const initialState = {
   error: null,

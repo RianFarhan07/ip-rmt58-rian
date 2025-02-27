@@ -8,11 +8,12 @@
     "port": 5433
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "postgres",
+    "password": "postgres",
+    "database": "recipediaIp1Rian_test",
+    "host": "localhost",
+    "dialect": "postgres",
+    "port": 5433
   },
   "production": {
     "username": "root",

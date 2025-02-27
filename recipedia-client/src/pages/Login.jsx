@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff, FiMail, FiLock } from "react-icons/fi";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../features/userSlice";
 import axios from "axios";
 import { BASE_URL } from "../helpers/url";
+import { loginUser } from "../features/user/userSlice";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +30,7 @@ const Login = () => {
     setFormError("");
 
     try {
-      await dispatch(loginUser(data)).unwrap();
+      await dispatch(loginUser(data));
       navigate("/");
     } catch (error) {
       console.error(error);

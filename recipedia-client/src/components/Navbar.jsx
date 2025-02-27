@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo-no-background.png";
 import { useDispatch } from "react-redux";
-import { signOut } from "../features/userSlice";
+import { signOut } from "../features/user/userSlice";
 
 const Navbar = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);

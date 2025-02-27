@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff, FiUser, FiMail, FiLock } from "react-icons/fi";
 import { useDispatch } from "react-redux";
-import { registerUser } from "../features/userSlice";
+import { registerUser } from "../features/user/userSlice";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);

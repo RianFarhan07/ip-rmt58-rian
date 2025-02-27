@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FiUser, FiSave, FiAlertCircle } from "react-icons/fi";
 import { useDispatch } from "react-redux";
-import { fetchProfile, updateProfile } from "../features/userSlice";
 import HeightWeightVisualization from "../components/HeightWeightChart";
+import { fetchProfile, updateProfile } from "../features/user/userSlice";
 
 const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);

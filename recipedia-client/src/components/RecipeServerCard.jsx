@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { FiClock, FiHeart, FiXCircle } from "react-icons/fi";
 import defaultImage from "../assets/logo-color.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToMyRecipe } from "../features/myRecipe/myRecipe";
+import Swal from "sweetalert2";
 
-const RecipeServerCard = ({ recipe, onSaveRecipe }) => {
+const RecipeServerCard = ({ recipe }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const dishTypes = recipe.dish_types ? JSON.parse(recipe.dish_types) : [];
   const ingredients = recipe.ingredients ? JSON.parse(recipe.ingredients) : [];
 
@@ -13,6 +18,20 @@ const RecipeServerCard = ({ recipe, onSaveRecipe }) => {
     if (minutes <= 15) return "Easy";
     if (minutes <= 30) return "Medium";
     return "Hard";
+  };
+
+  const handleAdd = async (id) => {
+    try {
+      await dispatch(addToMyRecipe(id));
+      navigate("/saved-recipe");
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.response?.data.message || error,
+      });
+    }
   };
 
   return (
@@ -81,7 +100,7 @@ const RecipeServerCard = ({ recipe, onSaveRecipe }) => {
 
       {/* Save Button - Outside of Link to avoid navigation */}
       <button
-        onClick={() => onSaveRecipe(recipe.spoonacular_id)}
+        onClick={() => handleAdd(recipe.spoonacular_id)}
         className="w-full py-2 bg-primary-dark hover:bg-primary text-white transition-colors rounded-b-card font-medium"
       >
         Save Recipe

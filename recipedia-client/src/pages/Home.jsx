@@ -20,7 +20,6 @@ const Home = () => {
   const [recentRecipe, setRecentRecipe] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
 
   const fetchRecentRecipes = async () => {
     setIsLoading(true);
@@ -61,29 +60,6 @@ const Home = () => {
   useEffect(() => {
     fetchRecentRecipes();
   }, []);
-
-  const handleOnSave = async (recipeId) => {
-    try {
-      await axios.post(
-        `${BASE_URL}/my-recipes/add/${recipeId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      navigate("/saved-recipe");
-    } catch (error) {
-      console.log(error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: error.response?.data.message || "Something went wrong!",
-      });
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -240,10 +216,7 @@ const Home = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {recentRecipe.map((recipe) => (
                 <div key={recipe.id}>
-                  <RecipeServerCard
-                    recipe={recipe}
-                    onSaveRecipe={handleOnSave}
-                  />
+                  <RecipeServerCard recipe={recipe} />
                 </div>
               ))}
             </div>
