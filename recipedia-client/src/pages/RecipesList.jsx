@@ -5,20 +5,18 @@ import Footer from "../components/Footer";
 import RecipeServerCard from "../components/RecipeServerCard";
 import axios from "axios";
 import { BASE_URL } from "../helpers/url";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRecipes } from "../features/recipe/recipeSlice";
 const RecipesList = () => {
   const [error, setError] = useState(null);
-  const [recipes, setRecipes] = useState([]);
+  const recipe = useSelector((state) => state.recipe.list);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const fetchRecipe = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/recipes`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-      setRecipes(response.data);
+      dispatch(fetchRecipes());
     } catch (error) {
       console.error("Error fetching recipe:", error);
       setError("Failed to fetch recipes. Please try again later.");
@@ -63,7 +61,7 @@ const RecipesList = () => {
         </div>
       </section>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 my-10">
-        {recipes.map((recipe) => (
+        {recipe.map((recipe) => (
           <Link key={recipe.id} to={`/recipeFullDetail/${recipe.id}`}>
             <RecipeServerCard recipe={recipe} />
           </Link>
