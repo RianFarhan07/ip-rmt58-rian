@@ -14,6 +14,8 @@ import {
 } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { BASE_URL } from "../helpers/url";
+import { useDispatch } from "react-redux";
+import { addToMyRecipe } from "../features/myRecipe/myRecipe";
 
 const RecipeDetail = () => {
   const [recipe, setRecipe] = useState(null);
@@ -21,6 +23,7 @@ const RecipeDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchRecipe();
@@ -61,17 +64,9 @@ const RecipeDetail = () => {
     }
   };
 
-  const handleSaveRecipe = async () => {
+  const handleSaveRecipe = async (id) => {
     try {
-      await axios.post(
-        `${BASE_URL}/my-recipes/add/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+      await dispatch(addToMyRecipe(id));
       navigate("/saved-recipe");
     } catch (error) {
       console.log(error);
@@ -261,7 +256,7 @@ const RecipeDetail = () => {
         </div>
 
         <button
-          onClick={() => navigate(`/recipeFullDetail/${recipe.spoonacular_id}`)}
+          onClick={() => handleSaveRecipe(recipe.spoonacular_id)}
           className="w-full py-2 bg-primary-dark hover:bg-primary-light text-white rounded-md transition-colors flex items-center justify-center gap-2"
         >
           <FaBookmark className="text-lg" /> Add to My Recipes

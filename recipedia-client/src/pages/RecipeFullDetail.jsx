@@ -22,6 +22,8 @@ import {
   FaInfoCircle,
   FaExternalLinkAlt,
 } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { addToMyRecipe } from "../features/myRecipe/myRecipe";
 
 const RecipeFullDetail = () => {
   const [recipe, setRecipe] = useState(null);
@@ -29,6 +31,7 @@ const RecipeFullDetail = () => {
   const [error, setError] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchRecipe();
@@ -88,15 +91,7 @@ const RecipeFullDetail = () => {
 
   const handleSaveRecipe = async () => {
     try {
-      await axios.post(
-        `${BASE_URL}/my-recipes/add/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+      await dispatch(addToMyRecipe(id));
       navigate("/saved-recipe");
     } catch (error) {
       console.log(error);
