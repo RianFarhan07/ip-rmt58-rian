@@ -19,34 +19,22 @@ const Footer = () => {
                 <h3 className="font-bold mb-4">Features</h3>
                 <ul className="space-y-2">
                   <li>
-                    <Link
-                      to="/"
-                      className="text-gray-300 hover:text-white transition-colors"
-                    >
+                    <Link className="text-gray-300 hover:text-white transition-colors">
                       Ingredient Search
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      to="/"
-                      className="text-gray-300 hover:text-white transition-colors"
-                    >
+                    <Link className="text-gray-300 hover:text-white transition-colors">
                       AI Recipe Creator
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      to="/"
-                      className="text-gray-300 hover:text-white transition-colors"
-                    >
+                    <Link className="text-gray-300 hover:text-white transition-colors">
                       Image Recognition
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      to="/"
-                      className="text-gray-300 hover:text-white transition-colors"
-                    >
+                    <Link className="text-gray-300 hover:text-white transition-colors">
                       Nutrition Analysis
                     </Link>
                   </li>
@@ -58,7 +46,7 @@ const Footer = () => {
                 <ul className="space-y-2">
                   <li>
                     <Link
-                      to="/"
+                      to="/about"
                       className="text-gray-300 hover:text-white transition-colors"
                     >
                       About Us
@@ -66,7 +54,7 @@ const Footer = () => {
                   </li>
                   <li>
                     <Link
-                      to="/"
+                      to="/blog"
                       className="text-gray-300 hover:text-white transition-colors"
                     >
                       Blog
@@ -74,7 +62,7 @@ const Footer = () => {
                   </li>
                   <li>
                     <Link
-                      to="/"
+                      to="/careers"
                       className="text-gray-300 hover:text-white transition-colors"
                     >
                       Careers
@@ -82,7 +70,7 @@ const Footer = () => {
                   </li>
                   <li>
                     <Link
-                      to="/"
+                      to="/contact"
                       className="text-gray-300 hover:text-white transition-colors"
                     >
                       Contact
@@ -96,7 +84,7 @@ const Footer = () => {
                 <ul className="space-y-2">
                   <li>
                     <Link
-                      to="/"
+                      to="/terms"
                       className="text-gray-300 hover:text-white transition-colors"
                     >
                       Terms of Service
@@ -104,7 +92,7 @@ const Footer = () => {
                   </li>
                   <li>
                     <Link
-                      to="/"
+                      to="/privacyPolicy"
                       className="text-gray-300 hover:text-white transition-colors"
                     >
                       Privacy Policy
@@ -112,7 +100,7 @@ const Footer = () => {
                   </li>
                   <li>
                     <Link
-                      to="/"
+                      to="/cookiePolicy"
                       className="text-gray-300 hover:text-white transition-colors"
                     >
                       Cookie Policy
@@ -129,30 +117,40 @@ const Footer = () => {
             </p>
             <div className="mt-4 md:mt-0">
               <div className="flex space-x-4">
-                {/* Social media icons would go here */}
                 <Link
-                  to="/"
+                  target="_blank"
+                  to="https://www.facebook.com/rianmallanti"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   FB
                 </Link>
                 <Link
-                  to="/"
+                  target="_blank"
+                  to="https://www.instagram.com/rianfarhan/"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   IG
                 </Link>
                 <Link
-                  to="/"
+                  target="_blank"
+                  to="https://linkedin.com/in/baso-rian-farhan-82bb73245"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  TW
+                  LN
                 </Link>
                 <Link
-                  to="/"
+                  target="_blank"
+                  to="https://github.com/rianfarhan07"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  YT
+                  GH
+                </Link>
+                <Link
+                  target="_blank"
+                  to="https://rian-portofolio.xyz"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  PF
                 </Link>
               </div>
             </div>

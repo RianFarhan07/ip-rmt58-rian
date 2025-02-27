@@ -35,20 +35,20 @@ const Home = () => {
       setRecentRecipe(response.data);
 
       setCategories([
-        { id: 1, name: "Main Course", icon: "🍽️", count: 42 },
-        { id: 2, name: "Side Dish", icon: "🥗", count: 28 },
-        { id: 3, name: "Dessert", icon: "🍰", count: 35 },
-        { id: 4, name: "Appetizer", icon: "🥟", count: 23 },
-        { id: 5, name: "Salad", icon: "🥬", count: 19 },
-        { id: 6, name: "Bread", icon: "🍞", count: 15 },
-        { id: 7, name: "Breakfast", icon: "☕", count: 24 },
-        { id: 8, name: "Soup", icon: "🍲", count: 18 },
-        { id: 9, name: "Beverage", icon: "🥤", count: 20 },
-        { id: 10, name: "Sauce", icon: "🧂", count: 12 },
-        { id: 11, name: "Marinade", icon: "🧄", count: 8 },
-        { id: 12, name: "Fingerfood", icon: "🍤", count: 16 },
-        { id: 13, name: "Snack", icon: "🍿", count: 22 },
-        { id: 14, name: "Drink", icon: "🍹", count: 17 },
+        { id: 1, name: "Main Course", icon: "🍽️", popularity: 5 },
+        { id: 2, name: "Side Dish", icon: "🥗", popularity: 4 },
+        { id: 3, name: "Dessert", icon: "🍰", popularity: 5 },
+        { id: 4, name: "Appetizer", icon: "🥟", popularity: 3 },
+        { id: 5, name: "Salad", icon: "🥬", popularity: 4 },
+        { id: 6, name: "Bread", icon: "🍞", popularity: 3 },
+        { id: 7, name: "Breakfast", icon: "☕", popularity: 5 },
+        { id: 8, name: "Soup", icon: "🍲", popularity: 4 },
+        { id: 9, name: "Beverage", icon: "🥤", popularity: 3 },
+        { id: 10, name: "Sauce", icon: "🧂", popularity: 2 },
+        { id: 11, name: "Marinade", icon: "🧄", popularity: 1 },
+        { id: 12, name: "Fingerfood", icon: "🍤", popularity: 4 },
+        { id: 13, name: "Snack", icon: "🍿", popularity: 4 },
+        { id: 14, name: "Drink", icon: "🍹", popularity: 3 },
       ]);
     } catch (error) {
       console.log(error);
@@ -170,7 +170,7 @@ const Home = () => {
                           {category.name}
                         </h3>
                         <p className="text-xs text-text-secondary">
-                          {category.count} recipes
+                          {category.popularity} stars
                         </p>
                       </Link>
                     ))}

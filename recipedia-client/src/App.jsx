@@ -13,6 +13,8 @@ import Nutrition from "./pages/Nutrition";
 import MyRecipesPage from "./pages/MyRecipeList";
 import RecipeDetail from "./pages/RecipeDetail";
 import RecipeFullDetail from "./pages/RecipeFullDetail";
+import RecipesList from "./pages/RecipesList";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   return (
@@ -35,13 +37,10 @@ const App = () => {
           <Route path="recipeFullDetail/:id" element={<RecipeFullDetail />} />
 
           <Route path="saved-recipe" element={<MyRecipesPage />} />
-          <Route
-            path="saved-recipe-detail/:id"
-            element={<h1>Saved Recipe Detail</h1>}
-          />
+          <Route path="recipes" element={<RecipesList />} />
         </Route>
 
-        <Route path="*" element={<h1>Not Found</h1>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

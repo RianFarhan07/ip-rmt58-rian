@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo-no-background.png";
 import { useDispatch } from "react-redux";
 import { signOut } from "../features/user/userSlice";
+import { FaHeart } from "react-icons/fa";
 
 const Navbar = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -64,6 +65,16 @@ const Navbar = () => {
           >
             Nutrition
           </Link>
+          <Link
+            to="/recipes"
+            className={`font-medium hover:text-primary transition-colors ${
+              isActiveRoute("/recipes")
+                ? "text-primary border-b-2 border-primary pb-1"
+                : "text-gray-700"
+            }`}
+          >
+            Most Saved
+          </Link>
         </div>
       </div>
 
@@ -77,20 +88,7 @@ const Navbar = () => {
           }`}
         >
           <div className="flex items-center gap-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
+            <FaHeart />
             <span className="hidden md:inline">Saved</span>
           </div>
         </Link>
