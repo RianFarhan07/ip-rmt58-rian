@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { FiEye, FiEyeOff, FiUser, FiMail, FiLock } from "react-icons/fi";
-import axios from "axios";
-import { BASE_URL } from "../helpers/url";
+import { FiEye, FiEyeOff, FiMail, FiLock } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../features/userSlice";
+import axios from "axios";
+import { BASE_URL } from "../helpers/url";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const navigate = useNavigate();
@@ -31,26 +30,50 @@ const Login = () => {
     setFormError("");
 
     try {
-      await dispatch(loginUser(data));
+      await dispatch(loginUser(data)).unwrap();
       navigate("/");
     } catch (error) {
-      console.log(error);
-      if (error.response.data.message) {
-        setFormError(error.response.data.message);
-      } else {
-        setFormError(`Registration failed. Please try again.`);
-      }
+      console.error(error);
+      setFormError(
+        error?.response?.data?.message || "Login failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
   };
+
+  async function handleCredentialResponse(response) {
+    console.log(response.credential);
+
+    const { data } = await axios.post(`${BASE_URL}/login/google`, {
+      googleToken: response.credential,
+    });
+
+    localStorage.setItem("access_token", data.access_token);
+    navigate("/");
+  }
+
+  useEffect(() => {
+    if (window.google?.accounts) {
+      window.google.accounts.id.initialize({
+        client_id:
+          "862816249459-dsb6773msf2dh8lqtehmevq2cvdta1oj.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+      });
+
+      window.google.accounts.id.renderButton(
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large" }
+      );
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-grow flex items-center justify-center p-6">
         <div className="bg-white rounded-card shadow-card w-full max-w-md p-8">
           <h2 className="text-2xl font-bold text-center mb-6">
-            Create your account
+            Login to your account
           </h2>
 
           {formError && (
@@ -68,9 +91,7 @@ const Login = () => {
                 Email
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiMail className="text-gray-400" />
-                </div>
+                <FiMail className="absolute inset-y-0 left-3 text-gray-400 mt-3" />
                 <input
                   id="email"
                   type="email"
@@ -102,9 +123,7 @@ const Login = () => {
                 Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiLock className="text-gray-400" />
-                </div>
+                <FiLock className="absolute inset-y-0 left-3 text-gray-400 mt-3" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -118,11 +137,11 @@ const Login = () => {
                   className={`w-full pl-10 pr-10 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary ${
                     errors.password ? "border-error" : "border-gray-300"
                   }`}
-                  placeholder="Create a password"
+                  placeholder="Enter your password"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-3 flex items-center"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -144,13 +163,13 @@ const Login = () => {
               disabled={isLoading}
               className="w-full bg-primary hover:bg-primary-hover text-white font-medium py-2 px-4 rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50"
             >
-              {isLoading ? "Login..." : "Login to your account"}
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-text-secondary">
-              Already have an account?{" "}
+              Don't have an account?{" "}
               <Link
                 to="/register"
                 className="text-primary hover:text-primary-hover font-medium"
@@ -158,6 +177,10 @@ const Login = () => {
                 Register
               </Link>
             </p>
+          </div>
+
+          <div className="w-full flex justify-center mt-4">
+            <div id="buttonDiv"></div>
           </div>
         </div>
       </div>

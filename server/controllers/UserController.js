@@ -1,6 +1,10 @@
+const { sign } = require("jsonwebtoken");
 const { comparePassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
 const { User } = require("../models");
+
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client();
 
 class UserController {
   static async register(req, res) {
@@ -217,6 +221,44 @@ class UserController {
       } else {
         res.status(500).json({ message: "Internal server error" });
       }
+    }
+  }
+  static async googleLogin(req, res) {
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: req.body.googleToken,
+        audience: process.env.GOOGLE_CLIENT_ID, // Specify the WEB_CLIENT_ID of the app that accesses the backend
+        // Or, if multiple clients access the backend:
+        //[WEB_CLIENT_ID_1, WEB_CLIENT_ID_2, WEB_CLIENT_ID_3]
+      });
+      const payload = ticket.getPayload();
+
+      let user = await User.findOne({
+        where: {
+          email: payload.email,
+        },
+      });
+
+      if (!user) {
+        user = await User.create(
+          {
+            username: payload.name,
+            email: payload.email,
+            password: "google",
+          },
+          {
+            hooks: false,
+          }
+        );
+      }
+
+      const accessToken = signToken({ id: user.id });
+
+      res.json({ message: "LoginSuccess", access_token: accessToken });
+      console.log(payload);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 }
