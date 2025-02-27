@@ -4,6 +4,7 @@ const authentication = require("../middlewares/authentication");
 const RecipeController = require("../controllers/RecipeController");
 const { route } = require("./user");
 
+router.get("/", authentication, RecipeController.getAllRecipesFromServer);
 router.get("/random", authentication, RecipeController.getRandomRecipe);
 router.get(
   "/findByIngredients",

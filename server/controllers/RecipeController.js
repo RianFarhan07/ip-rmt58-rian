@@ -7,6 +7,16 @@ const {
 const { generateContext } = require("../helpers/geminiAI");
 const { User } = require("../models");
 class RecipeController {
+  static async getAllRecipesFromServer(req, res) {
+    try {
+      const response = await Recipe.findAll();
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
   static async getRandomRecipe(req, res) {
     try {
       const response = await axios.get(

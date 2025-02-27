@@ -384,3 +384,251 @@ describe("POST /login", () => {
     );
   });
 });
+describe("POST /register", () => {
+  test("register success", async () => {
+    const response = await request(app).post("/register").send({
+      username: "testuser",
+      email: "testuser@gmail.com",
+      password: "password123",
+    });
+
+    console.log(response.body);
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("id", expect.any(Number));
+    expect(response.body).toHaveProperty("username", "testuser");
+    expect(response.body).toHaveProperty("email", "testuser@gmail.com");
+  });
+  test("register failed with empty username", async () => {
+    const response = await request(app).post("/register").send({
+      username: "",
+      email: "testuser@gmail.com",
+      password: "password123",
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Username cannot be empty");
+  });
+  test("register failed with empty email", async () => {
+    const response = await request(app).post("/register").send({
+      username: "testuser",
+      email: "",
+      password: "password123",
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Email cannot be empty");
+  });
+  test("register failed with empty password", async () => {
+    const response = await request(app).post("/register").send({
+      username: "testuser",
+      email: "testuser@gmail.com",
+      password: "",
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Password cannot be empty");
+  });
+  test("register failed with invalid email", async () => {
+    const response = await request(app).post("/register").send({
+      username: "testuser",
+      email: "invalidemail",
+      password: "password123",
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Invalid email format");
+  });
+  test("register failed with existing email", async () => {
+    const response = await request(app).post("/register").send({
+      username: "testuser",
+      email: "rian@gmail.com",
+      password: "password123",
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Email must be unique");
+  });
+});
+describe("PUT /profile", () => {
+  test("update Profile Success", async () => {
+    const newProfile = {
+      gender: "male",
+      weight: 70,
+      height: 170,
+      age: 25,
+      activity_level: "moderate",
+      diet: "vegetarian",
+      allergies: [],
+    };
+    const response = await request(app)
+      .put("/profile")
+      .set("Authorization", `Bearer ${access_token}`)
+      .send(newProfile);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Profile updated successfully"
+    );
+  });
+  test("update Profile failed with invalid token", async () => {
+    const newProfile = {
+      gender: "male",
+      weight: 70,
+      height: 170,
+      age: 25,
+      activityLevel: "moderate",
+    };
+    const response = await request(app)
+      .put("/profile")
+      .set("Authorization", `Bearer invalidtoken`)
+      .send(newProfile);
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message", "Invalid token");
+  });
+  test("update Profile failed with invalid profile data", async () => {
+    const newProfile = {
+      gender: "male",
+      weight: "invalid",
+      height: 170,
+      age: 25,
+      activityLevel: "moderate",
+    };
+    const response = await request(app)
+      .put("/profile")
+      .set("Authorization", `Bearer ${access_token}`)
+      .send(newProfile);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Weight must be a positive number"
+    );
+  });
+  test("update Profile failed with invalid gender", async () => {
+    const newProfile = {
+      gender: "invalid",
+      weight: 70,
+      height: 170,
+      age: 25,
+      activityLevel: "moderate",
+    };
+    const response = await request(app)
+      .put("/profile")
+      .set("Authorization", `Bearer ${access_token}`)
+      .send(newProfile);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Gender must be either 'male' or 'female'"
+    );
+  });
+  test("age is empty", async () => {
+    const newProfile = {
+      gender: "male",
+      weight: 70,
+      height: 170,
+      activityLevel: "moderate",
+    };
+    const response = await request(app)
+      .put("/profile")
+      .set("Authorization", `Bearer ${access_token}`)
+      .send(newProfile);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Age is required");
+  });
+});
+describe("GET /profile", () => {
+  test("get Profile Success", async () => {
+    const response = await request(app)
+      .get("/profile")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("id", expect.any(Number));
+    expect(response.body).toHaveProperty("username", "rian");
+    expect(response.body).toHaveProperty("email", "rian@gmail.com");
+  });
+  test("get Profile failed with invalid token", async () => {
+    const response = await request(app)
+      .get("/profile")
+      .set("Authorization", `Bearer invalidtoken`);
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message", "Invalid token");
+  });
+  test("get Profile failed with invalid profile data", async () => {
+    const response = await request(app)
+      .get("/profile")
+      .set("Authorization", `Bearer invalidtoken`);
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message", "Invalid token");
+  });
+});
+describe("GET /my-recipes", () => {
+  describe("User Saved Recipe Endpoints", () => {
+    test("Get all saved recipes", async () => {
+      const response = await request(app)
+        .get("/my-recipes")
+        .set("Authorization", `Bearer ${access_token}`);
+
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBeGreaterThan(0);
+    });
+    test("Get specific saved recipe", async () => {
+      const savedRecipeId = 1;
+      const response = await request(app)
+        .get(`/my-recipes/${savedRecipeId}`)
+        .set("Authorization", `Bearer ${access_token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("id", savedRecipeId);
+      expect(response.body).toBeInstanceOf(Object);
+    });
+    test("Update recipe notes", async () => {
+      const savedRecipeId = 1;
+      const notes = "Test notes for the recipe";
+      const response = await request(app)
+        .put(`/my-recipes/note/${savedRecipeId}`)
+        .set("Authorization", `Bearer ${access_token}`)
+        .send({ notes });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("notes", notes);
+    });
+    test("Delete a saved recipe", async () => {
+      const savedRecipeId = 1;
+      const response = await request(app)
+        .delete(`/my-recipes/delete/${savedRecipeId}`)
+        .set("Authorization", `Bearer ${access_token}`);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty(
+        "message",
+        "Recipe removed from saved recipes"
+      );
+      const checkResponse = await request(app)
+        .get(`/my-recipes/${savedRecipeId}`)
+        .set("Authorization", `Bearer ${access_token}`);
+      expect(checkResponse.status).toBe(404);
+    });
+  });
+});
+describe("GET /recipes", () => {
+  test("Get all recipes", async () => {
+    const response = await request(app)
+      .get("/recipes")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+  });
+  test("Get specific recipe", async () => {
+    const recipeId = 1;
+    const response = await request(app)
+      .get(`/recipes/server/${recipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("id", recipeId);
+    expect(response.body).toBeInstanceOf(Object);
+  });
+  test("getMostRecentRecipes", async () => {
+    const response = await request(app)
+      .get("/recipes/mostRecent")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+  });
+});
