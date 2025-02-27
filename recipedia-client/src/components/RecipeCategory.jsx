@@ -1,10 +1,14 @@
 import React from "react";
 import { FiClock, FiHeart } from "react-icons/fi";
 import defaultImage from "../assets/logo-color.png";
+import { Link } from "react-router-dom";
 
 const RecipeCategory = ({ recipe }) => {
   return (
-    <div className="bg-background-card rounded-card shadow-card hover:shadow-hover transition-shadow duration-300 overflow-hidden">
+    <Link
+      to={`/recipeFullDetail/${recipe.id}`}
+      className="bg-background-card rounded-card shadow-card hover:shadow-hover transition-shadow duration-300 overflow-hidden"
+    >
       <div className="relative h-48 overflow-hidden">
         <img
           src={recipe.image}
@@ -17,7 +21,7 @@ const RecipeCategory = ({ recipe }) => {
           {recipe.title}
         </h3>
       </div>
-    </div>
+    </Link>
   );
 };
 

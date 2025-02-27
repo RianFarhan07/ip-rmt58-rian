@@ -16,6 +16,11 @@ router.get(
   RecipeController.generateByNutrients
 );
 router.get(
+  "/generateIngredientRecommendations",
+  authentication,
+  RecipeController.generateIngredientRecommendations
+);
+router.get(
   "/mostRecent",
   authentication,
   RecipeController.getMostRecentRecipes

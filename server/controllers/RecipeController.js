@@ -99,7 +99,7 @@ class RecipeController {
       const proteinGrams = nutritionData.proteinGrams;
       const fatGrams = nutritionData.fatGrams;
 
-      // Calculate per-meal values (assuming 3 meals per day)
+      // kalkulasi min dan max kalori asumsikan 3x makan sehari
       const minCalories = Math.round((dailyCalories * 0.9) / 3); // 10% lower
       const maxCalories = Math.round((dailyCalories * 1.1) / 3); // 10% higher
 
@@ -175,6 +175,80 @@ class RecipeController {
       console.error("Error:", error);
       res.status(500).json({
         message: "Error calculating nutrition information or fetching recipes",
+        error: error.message,
+      });
+    }
+  }
+
+  static async generateIngredientRecommendations(req, res) {
+    const { id } = req.user;
+
+    try {
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      let { height, gender, weight, age, activity_level, diet, allergies } =
+        user;
+
+      if (!height || !gender || !weight || !age || !activity_level) {
+        return res.status(400).json({
+          message: "Please provide all required user information",
+        });
+      }
+
+      const allergiesString = allergies ? allergies.join(", ") : "none";
+
+      const prompt = `
+      Based on the following user profile, recommend 5 healthy ingredients that would be beneficial for their diet:
+      - Gender: ${gender}
+      - Age: ${age} years old
+      - Weight: ${weight} kg
+      - Height: ${height} cm
+      - Activity level: ${activity_level}
+      - Diet preference: ${diet || "no specific diet"}
+      - Food allergies: ${allergiesString}
+  
+      Consider their nutritional needs, dietary restrictions, and potential health benefits.
+      Format the response as a valid JSON array of strings containing ONLY the 5 ingredient names.
+      Example: ["spinach", "salmon", "quinoa", "blueberries", "almonds"]
+      Return ONLY the JSON array with no other text.
+      `;
+
+      const response = await generateContext(prompt);
+      console.log("AI ingredient recommendations response:", response);
+
+      const ingredientsArray = JSON.parse(
+        response.trim().replace("```json", "").replace("```", "")
+      );
+
+      const ingredientsParam = ingredientsArray.join(",");
+
+      const queryParams = new URLSearchParams({
+        ingredients: ingredientsParam,
+        number: 6,
+        diet: diet || "",
+        intolerances: allergies ? allergies.join(",") : "",
+        apiKey: SPOONACULAR_API_KEY,
+      });
+
+      const url = `${SPOONACULAR_BASE_URL}/recipes/complexSearch?${queryParams.toString()}`;
+      console.log("Spoonacular API URL:", url);
+
+      const spoonacularResponse = await fetch(url);
+      const recipes = await spoonacularResponse.json();
+
+      res.json({
+        recommendedIngredients: ingredientsArray,
+        recipes: recipes,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({
+        message:
+          "Error generating ingredient recommendations or fetching recipes",
         error: error.message,
       });
     }

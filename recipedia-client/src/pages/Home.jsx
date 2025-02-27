@@ -213,9 +213,9 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {recentRecipe.map((recipe) => (
-                <Link key={recipe.id} to={`/recipe/${recipe.id}`}>
+                <div key={recipe.id}>
                   <RecipeServerCard recipe={recipe} />
-                </Link>
+                </div>
               ))}
             </div>
           )}

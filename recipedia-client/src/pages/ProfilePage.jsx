@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FiUser, FiSave, FiAlertCircle } from "react-icons/fi";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchProfile, updateProfile } from "../features/userSlice";
-
+import HeightWeightVisualization from "../components/HeightWeightChart";
 
 const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [height, setHeight] = useState(170);
+  const [weight, setWeight] = useState(65);
+  const [gender, setGender] = useState("male");
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -30,10 +32,7 @@ const ProfilePage = () => {
     setValue,
   } = useForm({
     defaultValues: {
-      height: "",
-      weight: "",
       age: "",
-      gender: "",
       activity_level: "low",
       diet: "no_restriction",
       allergies: [],
@@ -53,10 +52,13 @@ const ProfilePage = () => {
     try {
       dispatch(fetchProfile()).then((profileData) => {
         if (profileData) {
-          setValue("height", profileData.height || "");
-          setValue("weight", profileData.weight || "");
+          // Set the visualization component states
+          setHeight(profileData.height || 170);
+          setWeight(profileData.weight || 65);
+          setGender(profileData.gender || "male");
+
+          // Set remaining form fields
           setValue("age", profileData.age || "");
-          setValue("gender", profileData.gender || "");
           setValue("activity_level", profileData.activity_level || "low");
           setValue("diet", profileData.diet || "no_restriction");
 
@@ -81,8 +83,9 @@ const ProfilePage = () => {
     try {
       const profileData = {
         ...data,
-        height: parseFloat(data.height),
-        weight: parseFloat(data.weight),
+        height: parseFloat(height),
+        weight: parseFloat(weight),
+        gender: gender,
         age: parseInt(data.age),
         diet: data.diet === "no_restriction" ? null : data.diet,
       };
@@ -162,107 +165,42 @@ const ProfilePage = () => {
             needs
           </p>
 
+          <div className="mb-8">
+            <h2 className="text-lg font-medium text-text-primary mb-4">
+              Body Metrics
+            </h2>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <HeightWeightVisualization
+                height={height}
+                weight={weight}
+                gender={gender}
+                setHeight={setHeight}
+                setWeight={setWeight}
+                setGender={setGender}
+              />
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">
-                  Height (cm)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  {...register("height", {
-                    required: "Height is required",
-                    min: { value: 50, message: "Height must be at least 50cm" },
-                    max: {
-                      value: 250,
-                      message: "Height must be less than 250cm",
-                    },
-                  })}
-                  className={`w-full px-3 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary ${
-                    errors.height ? "border-error" : "border-gray-300"
-                  }`}
-                  placeholder="Height in cm"
-                />
-                {errors.height && (
-                  <p className="mt-1 text-sm text-error">
-                    {errors.height.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">
-                  Weight (kg)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  {...register("weight", {
-                    required: "Weight is required",
-                    min: { value: 20, message: "Weight must be at least 20kg" },
-                    max: {
-                      value: 300,
-                      message: "Weight must be less than 300kg",
-                    },
-                  })}
-                  className={`w-full px-3 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary ${
-                    errors.weight ? "border-error" : "border-gray-300"
-                  }`}
-                  placeholder="Weight in kg"
-                />
-                {errors.weight && (
-                  <p className="mt-1 text-sm text-error">
-                    {errors.weight.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">
-                  Age
-                </label>
-                <input
-                  type="number"
-                  {...register("age", {
-                    required: "Age is required",
-                    min: { value: 1, message: "Age must be at least 1" },
-                    max: { value: 120, message: "Age must be less than 120" },
-                  })}
-                  className={`w-full px-3 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary ${
-                    errors.age ? "border-error" : "border-gray-300"
-                  }`}
-                  placeholder="Your age"
-                />
-                {errors.age && (
-                  <p className="mt-1 text-sm text-error">
-                    {errors.age.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">
-                  Gender
-                </label>
-                <select
-                  {...register("gender", {
-                    required: "Gender is required",
-                  })}
-                  className={`w-full px-3 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary ${
-                    errors.gender ? "border-error" : "border-gray-300"
-                  }`}
-                >
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-                {errors.gender && (
-                  <p className="mt-1 text-sm text-error">
-                    {errors.gender.message}
-                  </p>
-                )}
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Age
+              </label>
+              <input
+                type="number"
+                {...register("age", {
+                  required: "Age is required",
+                  min: { value: 1, message: "Age must be at least 1" },
+                  max: { value: 120, message: "Age must be less than 120" },
+                })}
+                className={`w-full px-3 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary ${
+                  errors.age ? "border-error" : "border-gray-300"
+                }`}
+                placeholder="Your age"
+              />
+              {errors.age && (
+                <p className="mt-1 text-sm text-error">{errors.age.message}</p>
+              )}
             </div>
 
             <div>

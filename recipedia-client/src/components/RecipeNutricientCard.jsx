@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const RecipeNutricientCard = ({ recipe }) => {
   if (!recipe) {
     return (
@@ -60,9 +62,11 @@ const RecipeNutricientCard = ({ recipe }) => {
           </div>
         </div>
 
-        <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors">
-          View Recipe
-        </button>
+        <Link to={`/fullDetail/${recipe.id}`}>
+          <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors">
+            View Recipe
+          </button>
+        </Link>
       </div>
     </div>
   );
