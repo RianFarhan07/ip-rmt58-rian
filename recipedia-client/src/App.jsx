@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import Category from "./pages/Category";
 import Search from "./pages/Search";
 import Nutrition from "./pages/Nutrition";
+import MyRecipesPage from "./pages/MyRecipeList";
+import RecipeDetail from "./pages/RecipeDetail";
 
 const App = () => {
   return (
@@ -28,9 +30,9 @@ const App = () => {
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="search" element={<Search />} />
 
-          <Route path="recipeDetail/:id" element={<h1>Recipe</h1>} />
+          <Route path="recipeDetail/:id" element={<RecipeDetail />} />
 
-          <Route path="saved-recipe" element={<h1>Saved Recipe</h1>} />
+          <Route path="saved-recipe" element={<MyRecipesPage />} />
           <Route
             path="saved-recipe-detail/:id"
             element={<h1>Saved Recipe Detail</h1>}

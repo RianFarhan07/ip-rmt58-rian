@@ -69,7 +69,7 @@ const Navbar = () => {
 
       <div className="flex items-center gap-4">
         <Link
-          to="/saved"
+          to="/saved-recipe"
           className={`font-medium hover:text-primary transition-colors ${
             location.pathname.includes("/saved")
               ? "text-primary"
