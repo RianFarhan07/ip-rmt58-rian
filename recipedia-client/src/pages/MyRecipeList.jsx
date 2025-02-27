@@ -1,15 +1,18 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FiTrash2 } from "react-icons/fi";
+import { FiTrash2, FiEye } from "react-icons/fi";
 import { BASE_URL } from "../helpers/url";
 import { useNavigate } from "react-router-dom";
 
 const MyRecipesPage = () => {
-  // Sample data from your API response
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentRecipe, setCurrentRecipe] = useState(null);
+  const [noteText, setNoteText] = useState("");
 
   const fetchMyRecipes = async () => {
     setIsLoading(true);
@@ -20,9 +23,11 @@ const MyRecipesPage = () => {
         },
       });
       setRecipes(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
       setError(error);
+      setIsLoading(false);
     }
   };
 
@@ -30,8 +35,7 @@ const MyRecipesPage = () => {
     fetchMyRecipes();
   }, []);
 
-  const handleDelete = async (e, recipeId) => {
-    e.stopPropagation();
+  const handleDelete = async (recipeId) => {
     try {
       await axios.delete(`${BASE_URL}/my-recipes/delete/${recipeId}`, {
         headers: {
@@ -39,6 +43,38 @@ const MyRecipesPage = () => {
         },
       });
       fetchMyRecipes();
+    } catch (error) {
+      console.log(error);
+      setError(error);
+    }
+  };
+
+  const openNotesModal = (recipe) => {
+    setCurrentRecipe(recipe);
+    setNoteText(recipe.notes || "");
+    setIsModalOpen(true);
+  };
+
+  const saveNotes = async () => {
+    try {
+      await axios.put(
+        `${BASE_URL}/my-recipes/note/${currentRecipe.id}`,
+        { notes: noteText },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      // Update the local state to reflect the changes
+      setRecipes(
+        recipes.map((recipe) =>
+          recipe.id === currentRecipe.id
+            ? { ...recipe, notes: noteText }
+            : recipe
+        )
+      );
+      setIsModalOpen(false);
     } catch (error) {
       console.log(error);
       setError(error);
@@ -55,11 +91,26 @@ const MyRecipesPage = () => {
     return badges;
   };
 
+  if (error) {
+    return (
+      <div className="p-6 max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">My Recipes</h1>
+        <div className="text-center p-10 bg-red-100 rounded-lg">
+          <p className="text-lg text-red-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-6 max-w-6xl mx-auto hover:cursor-pointer">
+    <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">My Recipes</h1>
 
-      {recipes.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center p-10">
+          <p className="text-lg">Loading your recipes...</p>
+        </div>
+      ) : recipes.length === 0 ? (
         <div className="text-center p-10 bg-gray-50 rounded-lg">
           <p className="text-lg text-gray-500">
             You haven't saved any recipes yet.
@@ -81,11 +132,7 @@ const MyRecipesPage = () => {
             </thead>
             <tbody>
               {recipes.map((recipe) => (
-                <tr
-                  key={recipe.id}
-                  onClick={() => navigate(`/recipeDetail/${recipe.id}`)}
-                  className="border-t border-gray-200 hover:bg-gray-50"
-                >
+                <tr key={recipe.id} className="border-t border-gray-200">
                   <td className="p-4">
                     <img
                       src={recipe.Recipe.image_url || "/api/placeholder/80/60"}
@@ -125,15 +172,29 @@ const MyRecipesPage = () => {
                       ))}
                     </div>
                   </td>
-                  <td className="p-4 text-sm">
+                  <td
+                    className="p-4 text-sm hover:bg-gray-100 cursor-pointer"
+                    onClick={() => openNotesModal(recipe)}
+                  >
                     {recipe.notes || (
-                      <span className="text-gray-400 italic">No notes</span>
+                      <span className="text-gray-400 italic">
+                        No notes (click to add)
+                      </span>
                     )}
                   </td>
                   <td className="p-4">
-                    <div className="flex justify-center">
+                    <div className="flex justify-center space-x-2">
                       <button
-                        onClick={(e) => handleDelete(e, recipe.id)}
+                        onClick={() =>
+                          navigate(`/recipeDetail/${recipe.RecipeId}`)
+                        }
+                        className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full"
+                        aria-label="View recipe details"
+                      >
+                        <FiEye size={20} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(recipe.id)}
                         className="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full"
                         aria-label="Delete recipe"
                       >
@@ -145,6 +206,36 @@ const MyRecipesPage = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {isModalOpen && currentRecipe && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">
+              Add Notes for {currentRecipe.Recipe.title}
+            </h2>
+            <textarea
+              className="w-full p-3 border border-gray-300 rounded-lg mb-4 h-32"
+              placeholder="Add your notes about this recipe..."
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+            ></textarea>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveNotes}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Save Notes
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

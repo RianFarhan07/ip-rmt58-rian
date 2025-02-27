@@ -46,7 +46,6 @@ const RecipeFullDetail = () => {
         }
       );
 
-      // Parse string fields if needed
       const recipeData = {
         ...response.data,
         dish_types:
@@ -80,17 +79,11 @@ const RecipeFullDetail = () => {
     }
   };
 
-  // Format price to currency
   const formatPrice = (price) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(price);
-  };
-
-  // Format nutritional value with units
-  const formatNutrition = (value, unit) => {
-    return `${value}${unit}`;
   };
 
   const handleSaveRecipe = async () => {
@@ -136,11 +129,11 @@ const RecipeFullDetail = () => {
           </h2>
           <p className="text-text-secondary mb-6">{error}</p>
           <Link
-            to="/recipes"
+            to="/"
             className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg"
           >
             <FaArrowLeft size={14} />
-            Back to Recipes
+            Back to Home
           </Link>
         </div>
       </div>
@@ -153,7 +146,6 @@ const RecipeFullDetail = () => {
 
   return (
     <div className="bg-background min-h-screen pb-12">
-      {/* Back button */}
       <div className="max-w-6xl mx-auto px-4 pt-6">
         <Link
           to="/recipes"
@@ -165,7 +157,6 @@ const RecipeFullDetail = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-6">
-        {/* Recipe Header */}
         <div className="bg-background-card rounded-card shadow-card overflow-hidden mb-8">
           <div className="relative">
             <img
@@ -218,7 +209,6 @@ const RecipeFullDetail = () => {
             </div>
           </div>
 
-          {/* Recipe Quick Info */}
           <div className="p-6 flex flex-wrap gap-6 bg-white border-b border-gray-200">
             <div className="flex items-center gap-2">
               <FaClock className="text-primary" size={20} />
@@ -291,9 +281,7 @@ const RecipeFullDetail = () => {
             )}
           </div>
 
-          {/* Classification Tags */}
           <div className="p-6 bg-background-dark">
-            {/* Diets */}
             {recipe.diets && recipe.diets.length > 0 && (
               <div className="mb-4">
                 <p className="text-text-secondary text-sm mb-2 flex items-center gap-1">
@@ -313,7 +301,6 @@ const RecipeFullDetail = () => {
               </div>
             )}
 
-            {/* Dish Types */}
             {recipe.dishTypes && recipe.dishTypes.length > 0 && (
               <div className="mb-4">
                 <p className="text-text-secondary text-sm mb-2 flex items-center gap-1">
@@ -333,7 +320,6 @@ const RecipeFullDetail = () => {
               </div>
             )}
 
-            {/* Cuisines */}
             {recipe.cuisines && recipe.cuisines.length > 0 && (
               <div className="mb-4">
                 <p className="text-text-secondary text-sm mb-2 flex items-center gap-1">
@@ -353,7 +339,6 @@ const RecipeFullDetail = () => {
               </div>
             )}
 
-            {/* Occasions */}
             {recipe.occasions && recipe.occasions.length > 0 && (
               <div>
                 <p className="text-text-secondary text-sm mb-2 flex items-center gap-1">
@@ -374,7 +359,6 @@ const RecipeFullDetail = () => {
             )}
           </div>
 
-          {/* Diet Information */}
           <div className="p-6 bg-white border-t border-gray-200 flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
               <FaCheckCircle
@@ -496,9 +480,7 @@ const RecipeFullDetail = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {/* Left Column */}
           <div className="md:col-span-1">
-            {/* Ingredients Section */}
             <div className="bg-background-card rounded-card shadow-card p-6 mb-6">
               <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2 flex items-center gap-2">
                 <FaShoppingBasket className="text-primary" />
@@ -533,7 +515,6 @@ const RecipeFullDetail = () => {
               </ul>
             </div>
 
-            {/* Cooking & Prep Time */}
             <div className="bg-background-card rounded-card shadow-card p-6 mb-6">
               <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2 flex items-center gap-2">
                 <FaClock className="text-primary" />
@@ -596,7 +577,6 @@ const RecipeFullDetail = () => {
               </div>
             </div>
 
-            {/* Additional Recipe Info */}
             <div className="bg-background-card rounded-card shadow-card p-6">
               <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2 flex items-center gap-2">
                 <FaInfoCircle className="text-primary" />
@@ -658,9 +638,7 @@ const RecipeFullDetail = () => {
             </div>
           </div>
 
-          {/* Right Column */}
           <div className="md:col-span-2">
-            {/* Recipe Summary */}
             <div className="bg-background-card rounded-card shadow-card p-6 mb-6">
               <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2">
                 About This Recipe
@@ -671,7 +649,6 @@ const RecipeFullDetail = () => {
               />
             </div>
 
-            {/* Instructions */}
             {recipe.instructions ? (
               <div className="bg-background-card rounded-card shadow-card p-6 mb-6">
                 <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2">
@@ -702,7 +679,6 @@ const RecipeFullDetail = () => {
                           <div className="flex-1">
                             <p className="mb-2">{step.step}</p>
 
-                            {/* Ingredients used in this step */}
                             {step.ingredients &&
                               step.ingredients.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mt-2">
@@ -717,7 +693,6 @@ const RecipeFullDetail = () => {
                                 </div>
                               )}
 
-                            {/* Equipment used in this step */}
                             {step.equipment && step.equipment.length > 0 && (
                               <div className="flex flex-wrap gap-2 mt-2">
                                 {step.equipment.map((item, i) => (
@@ -738,7 +713,6 @@ const RecipeFullDetail = () => {
                               </div>
                             )}
 
-                            {/* Time for this step */}
                             {step.length && (
                               <div className="flex items-center gap-1 text-xs text-text-secondary mt-2">
                                 <FaClock size={10} />
@@ -771,7 +745,6 @@ const RecipeFullDetail = () => {
               </div>
             )}
 
-            {/* Recipe Instructions */}
             <div className="bg-background-card rounded-card shadow-card p-6">
               <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2">
                 Step-by-Step Instructions
@@ -800,7 +773,6 @@ const RecipeFullDetail = () => {
                                 <p className="mb-3">{step.step}</p>
 
                                 <div className="flex flex-wrap gap-4 mt-3">
-                                  {/* Ingredients used in this step */}
                                   {step.ingredients &&
                                     step.ingredients.length > 0 && (
                                       <div className="w-full sm:w-auto">
@@ -822,7 +794,6 @@ const RecipeFullDetail = () => {
                                       </div>
                                     )}
 
-                                  {/* Equipment used in this step */}
                                   {step.equipment &&
                                     step.equipment.length > 0 && (
                                       <div className="w-full sm:w-auto">
@@ -844,7 +815,6 @@ const RecipeFullDetail = () => {
                                     )}
                                 </div>
 
-                                {/* Time for this step */}
                                 {step.length && (
                                   <div className="mt-3 flex items-center gap-1 text-sm text-text-secondary">
                                     <FaClock size={12} />

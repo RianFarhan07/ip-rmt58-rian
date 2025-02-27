@@ -8,19 +8,26 @@ import {
   FaArrowLeft,
   FaTag,
   FaCheckCircle,
+  FaInfoCircle,
+  FaBookmark,
+  FaEye,
 } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { BASE_URL } from "../helpers/url";
 
 const RecipeDetail = () => {
   const [recipe, setRecipe] = useState(null);
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRecipe();
   }, [id]);
 
   const fetchRecipe = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${BASE_URL}/recipes/server/${id}`, {
         headers: {
@@ -29,7 +36,6 @@ const RecipeDetail = () => {
       });
       console.log(response);
 
-      // Check if the fields are strings that need parsing or are already arrays
       const recipeData = {
         ...response.data,
         dish_types:
@@ -45,22 +51,73 @@ const RecipeDetail = () => {
       setRecipe(recipeData);
     } catch (error) {
       console.error("Error fetching recipe:", error);
+      if (error.response?.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to save recipe. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Fixed createMarkup function to correctly return the object structure
-  const createMarkup = (htmlContent) => {
-    return { __dangerouslySetInnerHTML: { __html: htmlContent } };
+  const handleSaveRecipe = async () => {
+    try {
+      await axios.post(
+        `${BASE_URL}/my-recipes/add/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      navigate("/saved-recipe");
+    } catch (error) {
+      console.log(error);
+      if (error.response?.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to save recipe. Please try again later.");
+      }
+    }
   };
 
-  if (!recipe) {
-    return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-background">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-32 w-32 rounded-full bg-primary/30 mb-4"></div>
+          <p className="text-text-secondary font-medium">Loading recipe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-background">
+        <div className="bg-background-card rounded-card shadow-card p-6 max-w-lg text-center">
+          <FaInfoCircle size={48} className="text-error mx-auto mb-4" />
+          <h2 className="text-xl font-display font-bold text-error mb-2">
+            Something went wrong
+          </h2>
+          <p className="text-text-secondary mb-6">{error}</p>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg"
+          >
+            <FaArrowLeft size={14} />
+            Back to Home
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="bg-background min-h-screen pb-12">
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* Recipe Header */}
         <div className="bg-background-card rounded-card shadow-card overflow-hidden mb-8">
           <div className="relative">
             <img
@@ -75,7 +132,6 @@ const RecipeDetail = () => {
             </div>
           </div>
 
-          {/* Recipe Quick Info */}
           <div className="p-6 flex flex-wrap gap-6 bg-white border-b border-gray-200">
             <div className="flex items-center gap-2">
               <FaClock className="text-primary" size={20} />
@@ -127,7 +183,6 @@ const RecipeDetail = () => {
             )}
           </div>
 
-          {/* Diet Information */}
           <div className="p-6 bg-background-dark flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
               <FaCheckCircle
@@ -205,8 +260,14 @@ const RecipeDetail = () => {
           </div>
         </div>
 
+        <button
+          onClick={() => navigate(`/recipeFullDetail/${recipe.spoonacular_id}`)}
+          className="w-full py-2 bg-primary-dark hover:bg-primary-light text-white rounded-md transition-colors flex items-center justify-center gap-2"
+        >
+          <FaBookmark className="text-lg" /> Add to My Recipes
+        </button>
+
         <div className="grid md:grid-cols-3 gap-8">
-          {/* Ingredients Section */}
           <div className="md:col-span-1">
             <div className="bg-background-card rounded-card shadow-card p-6 mb-6">
               <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2">
@@ -223,7 +284,6 @@ const RecipeDetail = () => {
               </ul>
             </div>
 
-            {/* Cooking & Prep Time */}
             <div className="bg-background-card rounded-card shadow-card p-6">
               <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2">
                 Time Breakdown
@@ -280,13 +340,11 @@ const RecipeDetail = () => {
             </div>
           </div>
 
-          {/* Recipe Summary and Instructions */}
           <div className="md:col-span-2">
             <div className="bg-background-card rounded-card shadow-card p-6 mb-6">
               <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2">
                 About This Recipe
               </h2>
-              {/* Fixed div to correctly use the dangerouslySetInnerHTML */}
               <div
                 className="prose max-w-none text-text-primary"
                 dangerouslySetInnerHTML={{ __html: recipe.summary }}
@@ -298,7 +356,6 @@ const RecipeDetail = () => {
                 <h2 className="text-xl font-display font-bold text-bold mb-4 border-b border-gray-200 pb-2">
                   Instructions
                 </h2>
-                {/* Fixed div to correctly use the dangerouslySetInnerHTML */}
                 <div
                   className="prose max-w-none text-text-primary"
                   dangerouslySetInnerHTML={{ __html: recipe.instructions }}
@@ -314,12 +371,21 @@ const RecipeDetail = () => {
                     Instructions are not available for this recipe.
                   </p>
                   <p className="text-text-primary">
-                    Try following a standard ramen noodle chicken salad
-                    preparation method with the listed ingredients.
+                    Try to see full detail recipe information
                   </p>
                 </div>
               </div>
             )}
+            <div className="bg-background-card rounded-card shadow-card p-6">
+              <button
+                onClick={() =>
+                  navigate(`/recipeFullDetail/${recipe.spoonacular_id}`)
+                }
+                className="w-full py-2 bg-primary-dark hover:bg-primary-light text-white rounded-md transition-colors flex items-center justify-center gap-2"
+              >
+                <FaEye className="text-lg" /> See Full Detail
+              </button>
+            </div>
           </div>
         </div>
       </div>

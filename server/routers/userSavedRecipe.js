@@ -22,7 +22,7 @@ router.delete(
   guardOwnerOnly,
   UserSavedRecipeController.deleteMyRecipe
 );
-router.post(
+router.put(
   "/note/:id",
   guardOwnerOnly,
   UserSavedRecipeController.updateNoteMyRecipe
