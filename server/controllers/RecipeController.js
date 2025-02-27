@@ -283,6 +283,20 @@ class RecipeController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+
+  static async getRecipeByIdInServer(req, res) {
+    try {
+      const { id } = req.params;
+      const response = await Recipe.findByPk(id);
+      if (!response) {
+        return res.status(404).json({ message: "Recipe not found" });
+      }
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
 
 module.exports = RecipeController;

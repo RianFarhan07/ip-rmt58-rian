@@ -30,7 +30,8 @@ const MyRecipesPage = () => {
     fetchMyRecipes();
   }, []);
 
-  const handleDelete = async (recipeId) => {
+  const handleDelete = async (e, recipeId) => {
+    e.stopPropagation();
     try {
       await axios.delete(`${BASE_URL}/my-recipes/delete/${recipeId}`, {
         headers: {
@@ -55,7 +56,7 @@ const MyRecipesPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto hover:cursor-pointer">
       <h1 className="text-3xl font-bold mb-6">My Recipes</h1>
 
       {recipes.length === 0 ? (
@@ -132,7 +133,7 @@ const MyRecipesPage = () => {
                   <td className="p-4">
                     <div className="flex justify-center">
                       <button
-                        onClick={() => handleDelete(recipe.id)}
+                        onClick={(e) => handleDelete(e, recipe.id)}
                         className="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full"
                         aria-label="Delete recipe"
                       >

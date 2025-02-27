@@ -30,5 +30,15 @@ router.get(
   authentication,
   RecipeController.getRecipesByCategory
 );
+router.get(
+  "/server/:id",
+  authentication,
+  RecipeController.getRecipeByIdInServer
+);
+router.get(
+  "/spoonacular/:id",
+  authentication,
+  RecipeController.getRecipeDetail
+);
 
 module.exports = router;

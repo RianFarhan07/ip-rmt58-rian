@@ -12,6 +12,7 @@ import Search from "./pages/Search";
 import Nutrition from "./pages/Nutrition";
 import MyRecipesPage from "./pages/MyRecipeList";
 import RecipeDetail from "./pages/RecipeDetail";
+import RecipeFullDetail from "./pages/RecipeFullDetail";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="search" element={<Search />} />
 
           <Route path="recipeDetail/:id" element={<RecipeDetail />} />
+          <Route path="recipeFullDetail/:id" element={<RecipeFullDetail />} />
 
           <Route path="saved-recipe" element={<MyRecipesPage />} />
           <Route

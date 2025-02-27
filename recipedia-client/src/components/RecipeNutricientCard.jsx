@@ -62,7 +62,7 @@ const RecipeNutricientCard = ({ recipe }) => {
           </div>
         </div>
 
-        <Link to={`/fullDetail/${recipe.id}`}>
+        <Link to={`/recipeFullDetail/${recipe.id}`}>
           <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors">
             View Recipe
           </button>

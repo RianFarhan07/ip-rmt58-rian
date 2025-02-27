@@ -22,7 +22,7 @@ const RecipeDetail = () => {
 
   const fetchRecipe = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/my-recipes/${id}`, {
+      const response = await axios.get(`${BASE_URL}/recipes/server/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -58,17 +58,7 @@ const RecipeDetail = () => {
   }
 
   return (
-    <div className="bg-background-DEFAULT min-h-screen pb-12">
-      {/* Navigation Bar */}
-      <div className="bg-primary-DEFAULT text-text-light p-4 sticky top-0 z-10 shadow-md">
-        <div className="max-w-6xl mx-auto flex items-center">
-          <button className="flex items-center gap-2 hover:bg-primary-hover p-2 rounded-button transition-colors">
-            <FaArrowLeft size={20} />
-            <span>Back to Recipes</span>
-          </button>
-        </div>
-      </div>
-
+    <div className="bg-background min-h-screen pb-12">
       <div className="max-w-6xl mx-auto px-4 py-6">
         {/* Recipe Header */}
         <div className="bg-background-card rounded-card shadow-card overflow-hidden mb-8">
@@ -88,7 +78,7 @@ const RecipeDetail = () => {
           {/* Recipe Quick Info */}
           <div className="p-6 flex flex-wrap gap-6 bg-white border-b border-gray-200">
             <div className="flex items-center gap-2">
-              <FaClock className="text-primary-DEFAULT" size={20} />
+              <FaClock className="text-primary" size={20} />
               <div>
                 <p className="text-text-secondary text-sm">Total Time</p>
                 <p className="text-text-primary font-medium">
@@ -98,7 +88,7 @@ const RecipeDetail = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <FaUsers className="text-primary-DEFAULT" size={20} />
+              <FaUsers className="text-primary" size={20} />
               <div>
                 <p className="text-text-secondary text-sm">Servings</p>
                 <p className="text-text-primary font-medium">
@@ -119,7 +109,7 @@ const RecipeDetail = () => {
 
             {recipe.dish_types && recipe.dish_types.length > 0 && (
               <div className="flex items-center gap-2">
-                <FaTag className="text-primary-DEFAULT" size={20} />
+                <FaTag className="text-primary" size={20} />
                 <div>
                   <p className="text-text-secondary text-sm">Meal Type</p>
                   <div className="flex gap-2 flex-wrap mt-1">
@@ -226,7 +216,7 @@ const RecipeDetail = () => {
                 {recipe.ingredients &&
                   recipe.ingredients.map((ingredient, index) => (
                     <li key={index} className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-primary-DEFAULT"></span>
+                      <span className="w-2 h-2 rounded-full bg-primary"></span>
                       <span className="capitalize">{ingredient}</span>
                     </li>
                   ))}
@@ -268,7 +258,7 @@ const RecipeDetail = () => {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
-                      className="bg-accent-DEFAULT h-2 rounded-full"
+                      className="bg-accent h-2 rounded-full"
                       style={{
                         width: `${
                           (recipe.cooking_minutes / recipe.ready_in_minutes) *

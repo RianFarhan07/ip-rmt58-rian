@@ -161,7 +161,7 @@ const Search = () => {
               {searchResults.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {searchResults.map((recipe) => (
-                    <Link key={recipe.id} to={`/recipe/${recipe.id}`}>
+                    <Link key={recipe.id} to={`/recipeFullDetail/${recipe.id}`}>
                       <RecipeCardIngredients recipe={recipe} />
                     </Link>
                   ))}
