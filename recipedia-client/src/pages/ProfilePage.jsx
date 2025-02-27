@@ -52,12 +52,10 @@ const ProfilePage = () => {
     try {
       dispatch(fetchProfile()).then((profileData) => {
         if (profileData) {
-          // Set the visualization component states
           setHeight(profileData.height || 170);
           setWeight(profileData.weight || 65);
           setGender(profileData.gender || "male");
 
-          // Set remaining form fields
           setValue("age", profileData.age || "");
           setValue("activity_level", profileData.activity_level || "low");
           setValue("diet", profileData.diet || "no_restriction");
@@ -91,6 +89,7 @@ const ProfilePage = () => {
       };
 
       await dispatch(updateProfile(profileData));
+      navigate("/");
 
       setSuccessMessage("Profile updated successfully!");
     } catch (error) {
