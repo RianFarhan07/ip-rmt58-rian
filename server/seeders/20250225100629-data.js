@@ -5,7 +5,7 @@ dotenv.config();
 
 const axios = require("axios");
 const { hashPassword } = require("../helpers/bcrypt");
-
+const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const BASE_URL = "https://api.spoonacular.com";
 
 // ID-ID resep populer dari Spoonacular untuk seeding
@@ -68,7 +68,7 @@ module.exports = {
 
       const response = await axios.get(`${BASE_URL}/recipes/informationBulk`, {
         params: {
-          apiKey: "2faf1b5ce2f04b47a98ed02b2da9b5c8",
+          apiKey: SPOONACULAR_API_KEY,
           ids: POPULAR_RECIPE_IDS.join(","),
           includeNutrition: false,
         },
