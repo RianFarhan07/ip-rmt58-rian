@@ -632,3 +632,298 @@ describe("GET /recipes", () => {
     expect(response.body.length).toBeGreaterThan(0);
   });
 });
+describe("GET /recipes/random", () => {
+  test("Get random recipes", async () => {
+    const response = await request(app)
+      .get("/recipes/random")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body.recipes)).toBe(true);
+    expect(response.body.recipes.length).toBeGreaterThan(0);
+  });
+});
+
+describe("GET /recipes/findByIngredients", () => {
+  test("Get recipes by ingredients", async () => {
+    const ingredients = "tomato,cheese";
+    const response = await request(app)
+      .get(`/recipes/findByIngredients?ingredients=${ingredients}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+  });
+});
+
+describe("GET /recipes/generateByNutrients", () => {
+  test("Generate recipes by nutrients", async () => {
+    const response = await request(app)
+      .get("/recipes/generateByNutrients")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("nutritionInfo");
+    expect(response.body).toHaveProperty("recipes");
+  });
+});
+
+describe("GET /recipes/generateIngredientRecommendations", () => {
+  test("Generate ingredient recommendations", async () => {
+    const response = await request(app)
+      .get("/recipes/generateIngredientRecommendations")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("recommendedIngredients");
+    expect(response.body).toHaveProperty("recipes");
+  });
+});
+
+describe("GET /recipes/categories/:category", () => {
+  test("Get recipes by category", async () => {
+    const category = "dessert";
+    const response = await request(app)
+      .get(`/recipes/categories/${category}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body.results)).toBe(true);
+    expect(response.body.results.length).toBeGreaterThan(0);
+  });
+});
+
+describe("GET /recipes/server/:id", () => {
+  test("Get recipe by ID in server", async () => {
+    const recipeId = 1; // Example recipe ID
+    const response = await request(app)
+      .get(`/recipes/server/${recipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("id", recipeId);
+  });
+
+  test("Get non-existent recipe by ID in server", async () => {
+    const recipeId = 9999; // Non-existent recipe ID
+    const response = await request(app)
+      .get(`/recipes/server/${recipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message", "Recipe not found");
+  });
+});
+
+describe("GET /recipes/spoonacular/:id", () => {
+  test("Get recipe details from Spoonacular", async () => {
+    const spoonacularId = 716429; // Example Spoonacular recipe ID
+    const response = await request(app)
+      .get(`/recipes/spoonacular/${spoonacularId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("id", spoonacularId);
+  });
+});
+
+describe("POST /my-recipes/add/:spoonacularId", () => {
+  test("Add a new recipe to my recipes", async () => {
+    const spoonacularId = 716429; // Example spoonacular ID
+    const response = await request(app)
+      .post(`/my-recipes/add/${spoonacularId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("UserId", expect.any(Number));
+    expect(response.body).toHaveProperty("RecipeId", expect.any(Number));
+  });
+
+  test("Add a recipe that already exists in my recipes", async () => {
+    const spoonacularId = 716429; // Example spoonacular ID
+    await request(app)
+      .post(`/my-recipes/add/${spoonacularId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    const response = await request(app)
+      .post(`/my-recipes/add/${spoonacularId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Resep ini sudah ada di koleksi Anda"
+    );
+  });
+});
+
+describe("GET /my-recipes/full-detail/:id", () => {
+  test("Get full details of a saved recipe", async () => {
+    const savedRecipeId = 3; // Example saved recipe ID
+    const response = await request(app)
+      .get(`/my-recipes/full-detail/${savedRecipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("id", expect.any(Number));
+    expect(response.body).toBeInstanceOf(Object);
+  });
+
+  test("Get full details of a non-existent recipe", async () => {
+    const savedRecipeId = 9999; // Non-existent saved recipe ID
+    const response = await request(app)
+      .get(`/my-recipes/full-detail/${savedRecipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message", "Recipe not found");
+  });
+});
+
+describe("DELETE /my-recipes/delete/:id", () => {
+  test("Delete a non-existent saved recipe", async () => {
+    const savedRecipeId = 9999; // Non-existent saved recipe ID
+    const response = await request(app)
+      .delete(`/my-recipes/delete/${savedRecipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message", "Your recipe not found");
+  });
+});
+
+describe("GET /recipes/random", () => {
+  test("Get random recipes", async () => {
+    const response = await request(app)
+      .get("/recipes/random")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body.recipes)).toBe(true);
+    expect(response.body.recipes.length).toBeGreaterThan(0);
+  });
+});
+
+describe("GET /recipes/findByIngredients", () => {
+  test("Get recipes by ingredients", async () => {
+    const ingredients = "tomato,cheese";
+    const response = await request(app)
+      .get(`/recipes/findByIngredients?ingredients=${ingredients}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+  });
+});
+
+describe("GET /recipes/generateByNutrients", () => {
+  test("Generate recipes by nutrients", async () => {
+    const response = await request(app)
+      .get("/recipes/generateByNutrients")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("nutritionInfo");
+    expect(response.body).toHaveProperty("recipes");
+  });
+});
+
+describe("GET /recipes/generateIngredientRecommendations", () => {
+  test("Generate ingredient recommendations", async () => {
+    const response = await request(app)
+      .get("/recipes/generateIngredientRecommendations")
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("recommendedIngredients");
+    expect(response.body).toHaveProperty("recipes");
+  });
+});
+
+describe("GET /recipes/categories/:category", () => {
+  test("Get recipes by category", async () => {
+    const category = "dessert";
+    const response = await request(app)
+      .get(`/recipes/categories/${category}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body.results)).toBe(true);
+    expect(response.body.results.length).toBeGreaterThan(0);
+  });
+});
+
+describe("GET /recipes/server/:id", () => {
+  test("Get recipe by ID in server", async () => {
+    const recipeId = 1; // Example recipe ID
+    const response = await request(app)
+      .get(`/recipes/server/${recipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("id", recipeId);
+  });
+
+  test("Get non-existent recipe by ID in server", async () => {
+    const recipeId = 9999; // Non-existent recipe ID
+    const response = await request(app)
+      .get(`/recipes/server/${recipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message", "Recipe not found");
+  });
+});
+
+describe("GET /recipes/spoonacular/:id", () => {
+  test("Get recipe details from Spoonacular", async () => {
+    const spoonacularId = 716429; // Example Spoonacular recipe ID
+    const response = await request(app)
+      .get(`/recipes/spoonacular/${spoonacularId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("id", spoonacularId);
+  });
+});
+
+describe("POST /my-recipes/add/:spoonacularId", () => {
+  test("Add a new recipe to my recipes", async () => {
+    const spoonacularId = 1; // Example spoonacular ID
+    const response = await request(app)
+      .post(`/my-recipes/add/${spoonacularId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("UserId", expect.any(Number));
+    expect(response.body).toHaveProperty("RecipeId", expect.any(Number));
+  });
+
+  test("Add a recipe that already exists in my recipes", async () => {
+    const spoonacularId = 716429; // Example spoonacular ID
+    await request(app)
+      .post(`/my-recipes/add/${spoonacularId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    const response = await request(app)
+      .post(`/my-recipes/add/${spoonacularId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Resep ini sudah ada di koleksi Anda"
+    );
+  });
+});
+
+describe("GET /my-recipes/full-detail/:id", () => {
+  test("Get full details of a non-existent recipe", async () => {
+    const savedRecipeId = 9999; // Non-existent saved recipe ID
+    const response = await request(app)
+      .get(`/my-recipes/full-detail/${savedRecipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message", "Recipe not found");
+  });
+});
+
+describe("PUT /my-recipes/note/:id", () => {
+  test("Update recipe notes with invalid data", async () => {
+    const savedRecipeId = 3; // Example saved recipe ID
+    const notes = ""; // Invalid notes
+    const response = await request(app)
+      .put(`/my-recipes/note/${savedRecipeId}`)
+      .set("Authorization", `Bearer ${access_token}`)
+      .send({ notes });
+    expect(response.status).toBe(403);
+  });
+});
+
+describe("DELETE /my-recipes/delete/:id", () => {
+  test("Delete a non-existent saved recipe", async () => {
+    const savedRecipeId = 9999; // Non-existent saved recipe ID
+    const response = await request(app)
+      .delete(`/my-recipes/delete/${savedRecipeId}`)
+      .set("Authorization", `Bearer ${access_token}`);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message", "Your recipe not found");
+  });
+});
