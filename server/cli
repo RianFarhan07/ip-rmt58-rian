@@ -12,4 +12,21 @@ npx sequelize-cli model:generate --name UserSavedRecipe --attributes UserId:inte
 
 
 export DATABASE_URL=postgresql://postgres.hhcefkvciilxqjnvwwak:makassar07@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
-    
+npx sequelize db:migrate --env production
+npx sequelize db:seed:all --env production
+
+module.exports = {
+  apps : [{
+    name   : "Recipedia_ServerApp",
+    script : "./app.js",
+    env: {
+        PORT="80"
+        SPOONACULAR_API_KEY="2faf1b5ce2f04b47a98ed02b2da9b5c8"
+        NODE_ENV="production"
+        GEMINIAI_API_KEY="AIzaSyCWL4rl95hJ1cFij_uKPTwcBesPp7Y9jRc"
+        GOOGLE_CLIENT_ID="862816249459-dsb6773msf2dh8lqtehmevq2cvdta1oj.apps.googleusercontent.com"
+        SUPABASE_PW="makassar07"
+        DATABASE_URL="postgresql://postgres.hhcefkvciilxqjnvwwak:makassar07@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+    }
+  }]
+}
