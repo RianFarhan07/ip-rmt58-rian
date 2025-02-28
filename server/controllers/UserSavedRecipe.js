@@ -129,6 +129,7 @@ class UserSavedRecipeController {
 
       // const { spoonacular_id } = myRecipe.Recipe;
 
+      // ini salah masih mau diganti jadi myRecipe aja
       res.status(200).json(myRecipe.Recipe);
     } catch (error) {
       console.log(error);
