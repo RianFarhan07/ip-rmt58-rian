@@ -9,3 +9,7 @@ npx sequelize-cli model:generate --name Recipe --attributes spoonacular_id:integ
 # Model UserSavedRecipes
 
 npx sequelize-cli model:generate --name UserSavedRecipe --attributes UserId:integer,RecipeId:integer,is_favorite:boolean,notes:text
+
+
+export DATABASE_URL=postgresql://postgres.hhcefkvciilxqjnvwwak:makassar07@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+    
