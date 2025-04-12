@@ -16,8 +16,8 @@ app.use(express.json());
 
 app.use("/", index);
 
-// app.listen(port, () => {
-//   console.log(`App is listening on http://localhost:${port}`);
-// });
+app.listen(port, () => {
+  console.log(`App is listening on http://localhost:${port}`);
+});
 
 module.exports = app;

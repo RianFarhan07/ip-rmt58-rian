@@ -141,9 +141,8 @@ const WelcomePage = () => {
             Join Recipedia Today
           </Link>
         </div>
-
-        <Footer />
       </section>
+      <Footer />
     </div>
   );
 };
